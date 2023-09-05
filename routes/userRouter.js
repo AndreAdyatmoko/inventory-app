@@ -11,7 +11,8 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/forgot', forgotPassword);
 router.put('/reset', resetPassword);
-router.post('/notifikasi/:pengajuanId', verifyToken, Notifikasi.getNotifikasi );
+router.post('/notifikasi/:pengajuanId', Notifikasi.createNotifikasi );
+router.get('/notifikasi/:notifikasiId', verifyToken, Notifikasi.getNotifikasibyId);
 
 
 

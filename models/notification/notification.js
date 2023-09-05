@@ -22,6 +22,9 @@ const notificationSchema = new mongoose.Schema({
         required: true
         
     },
+    status: {
+        type: String,
+    },
     tanggalDikirim:{
         type: Date,
         default: Date.now
