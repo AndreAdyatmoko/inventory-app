@@ -94,9 +94,59 @@ async function getPengajuan(req, res) {
     }
 }
 
+async function getPengajuanById(req, res){
+    try{
+        const pengajuanId = req.params.pengajuanId;
+        const pengajuan = await pengajuanBarang.findOne({_id: pengajuanId});
+        if(!pengajuan){
+            return res.status(404).json({message : "Data tidak ditemukan"})
+        }
+        res.status(200).json(pengajuan);
+
+    }catch(error){
+        console.log(error)
+        return res.status(200).json({message: "Tidak bisa mendapatkan Barangnya"})
+    }
+}
+
+async function deletePengajuan(req, res){
+    try{
+        const pengajuanId = req.params.pengajuanId;
+        const token = req.headers.authorization?.split(' ')[1];
+        const decodedToken = jwt.verify(token, config.jwtSecret);
+        // console.log(decodedToken)
+        const pengajuan = await pengajuanBarang.findOne({_id: pengajuanId});
+        if(!pengajuan){
+            return res.status(404).json({message : "Data tidak ditemukan"})
+        }
+
+        // ubah ke string terlebih dahulu
+        if(decodedToken.userId.toString() !== pengajuan.pengaju.id.toString()){
+            return res.status(401).json({message: "Anda tidak memiliki akses"})
+        }
+        if(pengajuan.gambar){
+            const filePath = path.join(__dirname,'/public/uploads/', pengajuan.gambar);
+            if(fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+        // console.log(decodedToken.userId.toString())
+        // console.log(pengajuan.pengaju.id.toString())
+
+        await pengajuanBarang.deleteOne({_id: pengajuanId});
+        res.status(200).json({message: "Berhasil menghapus data", pengajuan});
+
+    }catch(error){
+        console.log(error)
+        return res.status(404).json({message: "Ada kesalahan dari server sehingga tidak bisa menghapus data"})
+    }
+}
+
 
 module.exports = {
     pengajuanBarangController,
     editPengajuan,
     getPengajuan,
+    getPengajuanById,
+    deletePengajuan
 };

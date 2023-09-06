@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {verifyToken} = require('../middlewares/verify')
-const {pengajuanBarangController, editPengajuan,getPengajuan} = require('../controllers/pengajuan/pengajuanBarang');
+const {pengajuanBarangController, editPengajuan,getPengajuan, getPengajuanById, deletePengajuan} = require('../controllers/pengajuan/pengajuanBarang');
 const { multerUpload } = require('../middlewares/multer');
 const {getPengajuanProses, approvePengajuan, rejectedPengajuan} = require('../controllers/pengajuan/prosesHrd');
 const multer = require('multer');
@@ -12,6 +12,8 @@ router.post('/pengajuan', multerUpload.single('gambar'),verifyToken, pengajuanBa
 router.put('/edit/:pengajuanId',multerUpload.single('gambar'),verifyToken, editPengajuan);
 
 router.get('/pengajuan', verifyToken, getPengajuan)
+router.get('/pengajuan/:pengajuanId', verifyToken, getPengajuanById)
+router.delete('/pengajuan/:pengajuanId', verifyToken, deletePengajuan)
 
 //ini routing untuk HRD
 
