@@ -2,6 +2,10 @@ const pengajuanBarang = require('../../models/pengajuan/pengajuan');
 const User = require('../../models/user/user');
 const jwt = require('jsonwebtoken');
 const config = require('../../config/config');
+const fs = require('fs');
+const path = require('path');
+
+
 
 async function pengajuanBarangController(req, res) {
     try {
@@ -34,46 +38,48 @@ async function pengajuanBarangController(req, res) {
     }
 }
 
-async function editPengajuan(req, res){
-    try {
-        
-        const {namaBarang, deskripsi, jumlah, harga, jenisPengajuan} = req.body;
-
+async function editPengajuan(req, res) {
+    try{
+        const {namaBarang, deskripsi, harga, jumlah, jenisPengajuan} = req.body;
         const pengajuanId = req.params.pengajuanId;
-
         const token = req.headers.authorization?.split(' ')[1];
-        console.log(token)
+
         const decodedToken = jwt.verify(token, config.jwtSecret);
-        const pengajuan = await pengajuanBarang.findOne({_id: pengajuanId});
-        console.log(pengajuan)
+
+        const pengajuan = await pengajuanBarang.findById(pengajuanId);
+
         if(!pengajuan){
-            return res.status(404).json({message : "Data tidak ditemukan"})
+            return res.status(400).json({message: "Data tidak ditemukan"})
         }
 
-        if(decodedToken.userId !== pengajuan.pengaju.id){
-            return res.status(404).json({message : "Data tidak ditemukan"})
+        //Rubah semua id menjadi string untuk membandingkan
+        if(decodedToken.userId.toString() !== pengajuan.pengaju.id.toString()){
+            return res.status(401).json({message: "Anda tidak memiliki akses"})
         }
-        console.log(decodedToken.userId)
-        console.log(pengajuan.pengaju.id)
-
-        if(req.file){
-            if(pengajuan.gambar){
-                const path = './public/uploads/' + pengajuan.gambar;
-                fs.unlinkSync(path);
-            }
-            pengajuan.gambar = req.file.filename
-        }
-
+        
+       // Move file deletion logic here
+       if (req.file) {
+           if (pengajuan.gambar) {
+               const filePath = path.join(__dirname,'/public/uploads/', pengajuan.gambar);
+               if(fs.existsSync(filePath)) {
+                   fs.unlinkSync(filePath);
+               }
+           }
+           pengajuan.gambar=req.file.filename;
+       }
         pengajuan.namaBarang = namaBarang;
         pengajuan.deskripsi = deskripsi;
         pengajuan.jumlah = jumlah;
         pengajuan.harga = harga;
         pengajuan.jenisPengajuan = jenisPengajuan;
+
         await pengajuan.save();
-        return res.status(200).json({message: "Pengajuan berhasil diupdate"})
-    } catch (error){
-        console.log(error);
-        return res.status(500).json({message : "Ada kesalahan server"}, )
+        return res.status(200).json({message: "Berhasil merubah data pengajuan barang", pengajuan});
+
+
+    }catch(error){
+        console.error(error);
+        return res.status(500).json({message: "Ada kesalahan dari server"});
     }
 }
 
