@@ -84,9 +84,22 @@ async function getStockBarang(req, res) {
       return res.status(500).json({message: 'Terjadi kesalahan server'})
     }
   }
+
+  async function getStockByLokasi(req, res) {
+    try {
+      const { letakBarang } = req.body;
+      const stockBarang = await StockBarang.find({ 'letakBarang': letakBarang });
+  
+      return res.status(200).json(stockBarang);
+    } catch (error) {
+      console.log('Kesalahan saat melakukan sorting karena', error);
+      return res.status(500).json({ message: 'Terjadi kesalahan server' });
+    }
+  }
   
   module.exports = {
     createStockBarang,
     getStockBarang,
-    getStockByKategori
+    getStockByKategori,
+    getStockByLokasi
   };
