@@ -20,8 +20,12 @@ const stockBarangSchema = new mongoose.Schema({
     required: true,
   },
   letakBarang: {
-    type: String,
-    required: true,
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Lokasi',
+      required: true,
+    },
+    name: String,
   },
   kondisi: {
     type: String,

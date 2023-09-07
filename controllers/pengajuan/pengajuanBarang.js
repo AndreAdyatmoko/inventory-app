@@ -11,16 +11,17 @@ async function pengajuanBarangController(req, res) {
     try {
         const { namaBarang, deskripsi, jumlah, harga, jenisPengajuan, status, tanggalPengajuan } = req.body;
         const token = req.headers.authorization?.split(' ')[1];
-
+        console.log("1");
         const decodedToken = jwt.verify(token, config.jwtSecret);
-        
+        console.log("1");
         const pengaju = await User.findById(decodedToken.userId);
+        console.log("1");
         const newPengajuan = new pengajuanBarang({
             pengaju: {
                 id: pengaju._id,
                 fullname: pengaju.fullname
             },
-            gambar: req.file.filename,
+            gambar: req.files[0].filename,
             namaBarang,
             deskripsi,
             jumlah,
@@ -29,6 +30,8 @@ async function pengajuanBarangController(req, res) {
             status,
             tanggalPengajuan
         });
+        console.log("1");
+        console.log(newPengajuan);
         
         const pengajuan = await newPengajuan.save();
         

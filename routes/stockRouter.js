@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const{createKategoriBarang, getKategoris, getKategoriByQuery} = require('../controllers/stock/kategoriBarang')
-const {createStockBarang, getStockBarang, getStockByKategori, getStockByLokasi } = require('../controllers/stock/stockBarang')
+const {createStockBarang, getStockBarang, getStockByKategori } = require('../controllers/stock/stockBarang')
 const {multerUpload} = require('../middlewares/multer')
 
 
@@ -17,7 +17,6 @@ router.get('/byone', getKategoriByQuery)
 router.post('/make', multerUpload.single('gambar'), createStockBarang)
 router.get('/list', getStockBarang)
 router.get('/cat', getStockByKategori)
-router.get('/loc', getStockByLokasi)
 
 
 module.exports = router;

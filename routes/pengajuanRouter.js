@@ -4,12 +4,12 @@ const {verifyToken} = require('../middlewares/verify')
 const {pengajuanBarangController, editPengajuan,getPengajuan, getPengajuanById, deletePengajuan} = require('../controllers/pengajuan/pengajuanBarang');
 const { multerUpload } = require('../middlewares/multer');
 const {getPengajuanProses, approvePengajuan, rejectedPengajuan} = require('../controllers/pengajuan/prosesHrd');
-const multer = require('multer');
 
 
 
-router.post('/pengajuan', multerUpload.single('gambar'),verifyToken, pengajuanBarangController);
-router.put('/edit/:pengajuanId',multerUpload.single('gambar'),verifyToken, editPengajuan);
+
+router.post('/pengajuan', multerUpload.array('gambar', 4),verifyToken, pengajuanBarangController);
+router.put('/edit/:pengajuanId',multerUpload.array('gambar', 4),verifyToken, editPengajuan);
 
 router.get('/pengajuan', verifyToken, getPengajuan)
 router.get('/pengajuan/:pengajuanId', verifyToken, getPengajuanById)

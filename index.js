@@ -5,6 +5,7 @@ const userRouter = require('./routes/userRouter');
 const pengajuanRouter = require('./routes/pengajuanRouter');
 const stockRouter = require('./routes/stockRouter')
 const reportRouter = require('./routes/reportRouter')
+const locationRouter = require('./routes/locationRouter')
 const config = require('./config/config');
 const path = require('path')
 
@@ -45,3 +46,4 @@ app.use('/auth', userRouter);
 app.use('/barang', pengajuanRouter);
 app.use('/stock', stockRouter)
 app.use('/report', reportRouter)
+app.use('/location', locationRouter)
