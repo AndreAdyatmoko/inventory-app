@@ -10,9 +10,9 @@ const pengajuanBarangSchema = new mongoose.Schema({
         fullname: String
     },
     
-    gambar: {
+    gambar: [{
         type: String
-    },
+    }],
 
     namaBarang: {
         type: String,

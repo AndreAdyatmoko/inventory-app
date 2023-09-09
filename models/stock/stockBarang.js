@@ -4,9 +4,9 @@ const stockBarangSchema = new mongoose.Schema({
   namaBarang: {
     type: String,
   },
-  gambar: {
+  gambar: [{
     type: String,
-  },
+  }],
   penanggungJawab: {
     id: {
       type: mongoose.Schema.Types.ObjectId,

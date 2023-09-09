@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const{createKategoriBarang, getKategoris, getKategoriByQuery} = require('../controllers/stock/kategoriBarang')
-const {createStockBarang, getStockBarang, getStockByKategori } = require('../controllers/stock/stockBarang')
+const {createStockBarang, getStockBarang, getStockByKategori,editStockBarang } = require('../controllers/stock/stockBarang')
 const {multerUpload} = require('../middlewares/multer')
 
 
@@ -14,7 +14,8 @@ router.get('/byone', getKategoriByQuery)
 
 // ini untuk route buat create stock barang
 
-router.post('/make', multerUpload.single('gambar'), createStockBarang)
+router.post('/make', multerUpload.array('gambar', 4), createStockBarang)
+router.put('/edit/:_id', multerUpload.array('gambar', 4), editStockBarang)
 router.get('/list', getStockBarang)
 router.get('/cat', getStockByKategori)
 

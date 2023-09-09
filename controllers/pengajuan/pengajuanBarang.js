@@ -11,17 +11,20 @@ async function pengajuanBarangController(req, res) {
     try {
         const { namaBarang, deskripsi, jumlah, harga, jenisPengajuan, status, tanggalPengajuan } = req.body;
         const token = req.headers.authorization?.split(' ')[1];
-        console.log("1");
         const decodedToken = jwt.verify(token, config.jwtSecret);
-        console.log("1");
         const pengaju = await User.findById(decodedToken.userId);
-        console.log("1");
+
+        const gambarUrls =[];
+
+        req.files.forEach((file) => {
+            gambarUrls.push(file.filename);
+        })
         const newPengajuan = new pengajuanBarang({
             pengaju: {
                 id: pengaju._id,
                 fullname: pengaju.fullname
             },
-            gambar: req.files[0].filename,
+            gambar: gambarUrls,
             namaBarang,
             deskripsi,
             jumlah,
@@ -30,9 +33,6 @@ async function pengajuanBarangController(req, res) {
             status,
             tanggalPengajuan
         });
-        console.log("1");
-        console.log(newPengajuan);
-        
         const pengajuan = await newPengajuan.save();
         
         res.status(200).json({ message: 'Pengajuan berhasil', pengajuan });
@@ -40,7 +40,6 @@ async function pengajuanBarangController(req, res) {
         res.status(500).json(error);
     }
 }
-
 async function editPengajuan(req, res) {
     try{
         const {namaBarang, deskripsi, harga, jumlah, jenisPengajuan} = req.body;
@@ -60,7 +59,6 @@ async function editPengajuan(req, res) {
             return res.status(401).json({message: "Anda tidak memiliki akses"})
         }
         
-       // Move file deletion logic here
        if (req.file) {
            if (pengajuan.gambar) {
                const filePath = path.join(__dirname,'/public/uploads/', pengajuan.gambar);
@@ -112,18 +110,35 @@ async function getPengajuanById(req, res){
     }
 }
 
+async function getPengajuanByUser(req, res){
+    try{
+        const pengajuId = req.params.pengajuId;
+        const token = req.headers.authorization?.split(' ')[1];
+        const decodedToken = jwt.verify(token, config.jwtSecret);
+        if(decodedToken.userId !== pengajuId){
+            return res.status(401).json({message: "Anda tidak memiliki akses"})
+        }
+        const pengajuan = await pengajuanBarang.find({ 'pengaju.id': pengajuId });
+        if(!pengajuan){
+            return res.status(404).json({message : "Data tidak ditemukan"})
+        }
+        res.status(200).json(pengajuan);
+    }catch(error){
+        console.log(error)
+        return res.status(200).json({message: "Tidak bisa mendapatkan Barangnya"})
+    }
+}
+
 async function deletePengajuan(req, res){
     try{
         const pengajuanId = req.params.pengajuanId;
         const token = req.headers.authorization?.split(' ')[1];
         const decodedToken = jwt.verify(token, config.jwtSecret);
-        // console.log(decodedToken)
         const pengajuan = await pengajuanBarang.findOne({_id: pengajuanId});
         if(!pengajuan){
             return res.status(404).json({message : "Data tidak ditemukan"})
         }
 
-        // ubah ke string terlebih dahulu
         if(decodedToken.userId.toString() !== pengajuan.pengaju.id.toString()){
             return res.status(401).json({message: "Anda tidak memiliki akses"})
         }
@@ -133,9 +148,6 @@ async function deletePengajuan(req, res){
                 fs.unlinkSync(filePath);
             }
         }
-        // console.log(decodedToken.userId.toString())
-        // console.log(pengajuan.pengaju.id.toString())
-
         await pengajuanBarang.deleteOne({_id: pengajuanId});
         res.status(200).json({message: "Berhasil menghapus data", pengajuan});
 
@@ -151,5 +163,6 @@ module.exports = {
     editPengajuan,
     getPengajuan,
     getPengajuanById,
-    deletePengajuan
+    deletePengajuan,
+    getPengajuanByUser
 };
