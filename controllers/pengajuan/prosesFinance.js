@@ -16,7 +16,7 @@ async function getPengajuanFinance(req, res) {
             return res.status(401).json({ message: 'Anda tidak memiliki akses karena Anda bukan Finance' });
         }
 
-        const pengajuan = await pengajuanBarang.find({ 'status': 'proses' });
+        const pengajuan = await pengajuanBarang.find({ 'status': 'approved_HRD' });
 
         if (!pengajuan || pengajuan.length === 0) {
             return res.status(404).json({ message: "Data tidak ditemukan" });

@@ -88,7 +88,6 @@ const resetPassword = async (req, res) => {
         if(!cekUser || cekUser.resetPasswordToken !== token || cekUser.verifiedChangePassword){
             return res.status(404).json({message: "User tidak ditemukan dan token tidak valid"})
         }
-        console.log("6")
         const hashedPassword = await bcrypt.hash(password, 10);
         cekUser.password = hashedPassword
         cekUser.verifiedChangePassword = true

@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const {verifyToken} = require('../middlewares/verify')
-const {pengajuanBarangController, editPengajuan,getPengajuan, getPengajuanById, deletePengajuan, getPengajuanByUser} = require('../controllers/pengajuan/pengajuanBarang');
+const {createBarangController, editPengajuan,getPengajuan, getPengajuanById, deletePengajuan, getPengajuanByUser} = require('../controllers/pengajuan/pengajuanBarang');
 const { multerUpload } = require('../middlewares/multer');
 const {getPengajuanProses, approvePengajuan, rejectedPengajuan} = require('../controllers/pengajuan/prosesHrd');
 const {getPengajuanFinance, pengajuanApproveFinance, pengajuanRejectFinance} = require('../controllers/pengajuan/prosesFinance');
 
 
-router.post('/pengajuan', multerUpload.array('gambar', 4),verifyToken, pengajuanBarangController);
+router.post('/pengajuan', multerUpload.array('gambar', 4),verifyToken, createBarangController);
 router.put('/edit/:pengajuanId',multerUpload.array('gambar', 4),verifyToken, editPengajuan);
 
 router.get('/pengajuan', verifyToken, getPengajuan)

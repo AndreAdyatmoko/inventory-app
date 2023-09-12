@@ -46,11 +46,11 @@ async function approvePengajuan(req, res){
             return res.status(404).json({message : "Data tidak ditemukan"})
         }
 
-        if(pengajuan.status === 'approved'){
+        if(pengajuan.status === 'approved_HRD'){
             return res.status(400).json({message: "Pengajuan sudah diapprove sebelumnya"})
         }
 
-        pengajuan.status = 'approved';
+        pengajuan.status = 'approved_HRD';
 
         await pengajuan.save();
         
@@ -87,11 +87,11 @@ async function rejectedPengajuan(req, res){
             return res.status(404).json({message : "Data tidak ditemukan"})
         }
 
-        if(pengajuan.status === 'rejected'){
+        if(pengajuan.status === 'rejected_HRD'){
             return res.status(400).json({message: "Pengajuan sudah direject sebelumnya"})
         }
 
-        pengajuan.status = 'rejected';
+        pengajuan.status = 'rejected_HRD';
         await pengajuan.save();
 
         const notifikasi = new Notifikasi({
